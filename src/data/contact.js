@@ -2,7 +2,7 @@
 
 export const contact = {
   // null hides the row. Set a string like 'me@example.com' to show it.
-  email: null,
+  email: 'inbox.tirthnotfound@gmail.com',
   discord: 'tnf404',
   links: [
     { name: 'GitHub', handle: '@TirthNotFoundthedev', href: 'https://github.com/TirthNotFoundthedev' },

@@ -24,5 +24,12 @@ export const projects = [
         tags: ['Python','Webhooks','Telegram'],
         repo: 'https://github.com/TirthNotFoundthedev/Toggl-Manager-Webhook',
         live: null
+    },
+    {
+        title: "NFIP API",
+        summary: "My custom API protocol for my programs/projects to send notifications to me.",
+        tags: ['Python','Custom API','Custom Protocol'],
+        repo: 'https://github.com/TirthNotFoundthedev/NFIP-API',
+        live: null
     }
 ];
