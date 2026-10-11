@@ -4,6 +4,7 @@ import '@fontsource-variable/space-grotesk';
 import '@fontsource/instrument-serif/400-italic.css';
 import '../styles/global.css';
 import { profile } from '../data/profile.js';
+import Analytics from '@vercel/analytics/astro';
 
 const { title = `${profile.name} (${profile.handle})`, description = profile.tagline } = Astro.props;
 ---
@@ -21,6 +22,7 @@ const { title = `${profile.name} (${profile.handle})`, description = profile.tag
       document.documentElement.classList.add('js');
     </script>
     <slot name="head" />
+    <Analytics />
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
