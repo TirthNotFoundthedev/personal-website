@@ -8,5 +8,7 @@ export const contact = {
     { name: 'GitHub', handle: '@TirthNotFoundthedev', href: 'https://github.com/TirthNotFoundthedev' },
     { name: 'LinkedIn', handle: 'in/tirthnotfound', href: 'https://www.linkedin.com/in/tirthnotfound/' },
     { name: 'Instagram', handle: '@tirthz37', href: 'https://instagram.com/tirthz37/' },
+    { name: 'Leetcode', handle: 'tirthnotfound', href: 'https://leetcode.com/tirthnotfound'},
+    { name: 'CodeForces', handle: 'TirthNotFound', href: 'codeforces.com/profile/TirthNotFound'}
   ],
 };
