@@ -17,5 +17,12 @@ export const projects = [
         tags: ['Game'],
         repo: 'https://github.com/TirthNotFoundthedev/Kachuful',
         live: 'https://kachuphul-bytirth.vercel.app/'
+    },
+    {
+        title: "Toggl - Telegram Connect",
+        summary: "A webhook based telegram bots that lets me and my friends check on each other's Toggl Timers.",
+        tags: ['Python','Webhooks','Telegram'],
+        repo: 'https://github.com/TirthNotFoundthedev/Toggl-Manager-Webhook',
+        live: null
     }
 ];
