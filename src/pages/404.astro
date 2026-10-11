@@ -1,0 +1,66 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Headline from '../components/Headline.astro';
+import { profile } from '../data/profile.js';
+import { ui } from '../data/ui.js';
+---
+
+<Base title={`${ui.notFound.title} | ${profile.handle}`}>
+  <Header home="/" />
+  <main id="main" class="nf">
+    <div class="nf-text">
+      <p class="label"><span class="num">404</span>{ui.notFound.title}</p>
+      <Headline as="h1" text={ui.notFound.headline} />
+      <p class="nf-body">{ui.notFound.text}</p>
+      <a class="btn" href="/">{ui.notFound.home}</a>
+    </div>
+    <canvas class="nf-canvas" aria-hidden="true"></canvas>
+  </main>
+</Base>
+
+<style>
+  .nf {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 32px;
+    min-height: 100svh;
+    padding: calc(var(--header-h) + 32px) var(--gutter) 32px;
+  }
+
+  .nf-text :global(.headline) {
+    margin: 16px 0 20px;
+    font-size: clamp(2rem, 5vw, 4rem);
+  }
+
+  .nf-body {
+    max-width: 44ch;
+    margin: 0 0 28px;
+    color: var(--muted);
+  }
+
+  .nf-canvas {
+    width: 100%;
+    height: min(70svh, 640px);
+  }
+
+  @media (max-width: 800px) {
+    .nf {
+      grid-template-columns: 1fr;
+    }
+    .nf-canvas {
+      order: -1;
+      height: 42svh;
+    }
+  }
+</style>
+
+<script>
+  import { createNotFoundScene } from '../scripts/not-found-scene.js';
+
+  createNotFoundScene(
+    document.querySelector('.nf-canvas'),
+    matchMedia('(prefers-reduced-motion: reduce)').matches,
+  );
+</script>

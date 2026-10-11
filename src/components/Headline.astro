@@ -1,0 +1,8 @@
+---
+// Renders a { before, em, after } headline from the data files.
+const { text, as: Tag = 'h2', id, class: className } = Astro.props;
+// No space before trailing punctuation, so "built." doesn't become "built ."
+const tight = /^[.,!?;:]/.test(text.after ?? '');
+---
+
+<Tag id={id} class:list={['headline', className]}>{text.before}{' '}<em>{text.em}</em>{tight ? '' : ' '}{text.after}</Tag>

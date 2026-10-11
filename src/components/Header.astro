@@ -1,0 +1,131 @@
+---
+import { profile } from '../data/profile.js';
+import { sections } from '../data/sections.js';
+import { ui } from '../data/ui.js';
+
+// withMenu: the home page's phone menu. On desktop the section index (SectionNav) is the only menu.
+const { home = '#hello', withMenu = false } = Astro.props;
+---
+
+<header class="site-header">
+  <a class="logo" href={home} aria-label={`${profile.handle}, home`}>
+    <span class="logo-full">{profile.handle}</span>
+    <span class="logo-short" aria-hidden="true">TNF</span>
+  </a>
+
+  {withMenu && (
+    <div class="menu">
+      <button class="menu-toggle btn" type="button" aria-expanded="false" aria-controls="menu-panel">{ui.menu}</button>
+      <ul id="menu-panel" class="menu-panel" hidden>
+        {sections.map((s) => (
+          <li><a href={`#${s.id}`}>{s.label}</a></li>
+        ))}
+      </ul>
+    </div>
+  )}
+</header>
+
+<style>
+  .site-header {
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: 50;
+    height: var(--header-h);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 0 var(--gutter);
+    background: var(--bg);
+    border-bottom: 1px solid var(--line);
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    text-transform: uppercase;
+  }
+
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    text-decoration: none;
+    color: var(--accent);
+  }
+
+  .logo-short {
+    display: none;
+    font-family: var(--font-pixel);
+  }
+
+  .menu {
+    position: relative;
+  }
+
+  .menu-toggle {
+    min-height: 36px;
+    padding: 6px 12px;
+  }
+
+  .menu-panel {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 9px);
+    min-width: 180px;
+    margin: 0;
+    padding: 6px 0;
+    list-style: none;
+    background: var(--bg);
+    border: 1px solid var(--line);
+  }
+
+  .menu-panel a {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 16px;
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .menu-panel a:hover {
+    background: var(--accent);
+    color: var(--bg);
+  }
+
+  @media (min-width: 960px) {
+    .menu {
+      display: none;
+    }
+  }
+
+  @media (max-width: 520px) {
+    .logo-full {
+      display: none;
+    }
+    .logo-short {
+      display: inline;
+    }
+  }
+</style>
+
+<script>
+  const toggle = document.querySelector('.menu-toggle');
+  const panel = document.getElementById('menu-panel');
+
+  if (toggle && panel) {
+    const setOpen = (open) => {
+      toggle.setAttribute('aria-expanded', String(open));
+      panel.hidden = !open;
+    };
+    toggle.addEventListener('click', () => setOpen(panel.hidden));
+    panel.addEventListener('click', (e) => e.target.closest('a') && setOpen(false));
+    addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !panel.hidden) {
+        setOpen(false);
+        toggle.focus();
+      }
+    });
+    addEventListener('click', (e) => {
+      if (!panel.hidden && !e.target.closest('.menu')) setOpen(false);
+    });
+  }
+</script>

@@ -1,0 +1,80 @@
+---
+import { profile } from '../data/profile.js';
+
+const words = profile.likes;
+---
+
+<div class="marquee" data-reveal style="--d: 360ms">
+  <div class="track">
+    {[0, 1, 2, 3].map((copy) => (
+      <ul aria-hidden={copy > 0 ? 'true' : undefined}>
+        {words.map((w) => <li>{w}</li>)}
+      </ul>
+    ))}
+  </div>
+</div>
+
+<style>
+  .marquee {
+    overflow: hidden;
+    border-bottom: 1px solid var(--line);
+    padding: 14px 0;
+    font-family: var(--font-pixel);
+    font-size: 0.9375rem;
+    text-transform: uppercase;
+  }
+
+  .track {
+    display: flex;
+    width: max-content;
+    animation: slide 48s linear infinite;
+  }
+
+  .marquee:hover .track,
+  :global(.is-paused) .track {
+    animation-play-state: paused;
+  }
+
+  ul {
+    display: flex;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  li {
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+  }
+
+  li::after {
+    content: '';
+    width: 6px;
+    height: 6px;
+    margin: 0 22px;
+    background: var(--accent);
+  }
+
+  @keyframes slide {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  /* Reduced motion: a static wrapped list instead of a ticker. */
+  @media (prefers-reduced-motion: reduce) {
+    .track {
+      width: auto;
+      animation: none;
+      padding: 0 var(--gutter);
+    }
+    ul {
+      flex-wrap: wrap;
+      row-gap: 8px;
+    }
+    ul[aria-hidden] {
+      display: none;
+    }
+  }
+</style>

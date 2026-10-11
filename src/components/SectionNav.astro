@@ -1,0 +1,121 @@
+---
+import { sections } from '../data/sections.js';
+
+const targets = sections.filter((s) => s.id !== 'hello');
+---
+
+<nav class="section-nav" aria-label="Sections">
+  {targets.map((s) => (
+    <a class="sn-label" href={`#${s.id}`} data-section={s.id}>
+      <span class="sr-only">{s.label}</span>
+      {[...s.label.toUpperCase()].map((ch) => (
+        <span class="sn-ch" aria-hidden="true">{ch}</span>
+      ))}
+    </a>
+  ))}
+</nav>
+
+<div class="rail" aria-hidden="true">
+  <div class="rail-marker"><span class="rail-pct">0%</span></div>
+</div>
+
+<style>
+  /* Each letter is positioned on its own by section-nav.js, so names travel letter by letter. */
+  .sn-label {
+    display: contents;
+    color: var(--muted);
+    text-decoration: none;
+  }
+
+  .sn-ch {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 60;
+    padding: 2px 1px;
+    background: var(--bg);
+    color: inherit;
+    font-family: var(--font-pixel);
+    font-size: 0.875rem;
+    line-height: 1.4;
+    white-space: pre;
+    transform-origin: 0 0;
+    will-change: transform, opacity;
+  }
+
+  .sn-label:hover,
+  .sn-label[aria-current='true'] {
+    color: var(--text);
+  }
+
+  .sn-label.is-docked {
+    color: var(--accent);
+  }
+
+  .sn-label:focus-visible .sn-ch {
+    background: var(--accent);
+    color: var(--bg);
+  }
+
+  .sn-label.is-gone .sn-ch {
+    visibility: hidden;
+  }
+
+  /* Measuring pass: lay the letters out normally once to read their offsets. */
+  .section-nav.is-measuring .sn-label {
+    display: inline-block;
+    position: absolute;
+    left: 0;
+    top: 0;
+    visibility: hidden;
+    white-space: nowrap;
+  }
+
+  .section-nav.is-measuring .sn-ch {
+    position: static;
+    transform: none;
+  }
+
+  /* The timeline: a ruler down the right edge with a scroll-progress marker. */
+  .rail {
+    position: fixed;
+    top: var(--header-h);
+    right: 0;
+    bottom: 0;
+    z-index: 40;
+    width: var(--rail-w);
+    border-left: 1px solid var(--line);
+    background: repeating-linear-gradient(to bottom, var(--line) 0 1px, transparent 1px 24px) right 0 top 0 / 10px 100% no-repeat;
+    pointer-events: none;
+  }
+
+  .rail-marker {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 18px;
+    height: 2px;
+    background: var(--accent);
+    will-change: transform;
+  }
+
+  .rail-pct {
+    position: absolute;
+    right: 22px;
+    top: -7px;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    color: var(--accent);
+  }
+
+  @media (max-width: 959px) {
+    .rail {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  import { initSectionNav } from '../scripts/section-nav.js';
+  initSectionNav();
+</script>

@@ -1,0 +1,410 @@
+---
+import { profile } from '../data/profile.js';
+import { sections, sectionNumber } from '../data/sections.js';
+import { ui } from '../data/ui.js';
+---
+
+<section id="hello" class="hero" aria-labelledby="hero-title">
+  <canvas class="hero-canvas" aria-hidden="true"></canvas>
+  <h1 id="hero-title" class="hero-title">{profile.name} <span>({profile.handle})</span></h1>
+
+  <button class="sprite-hit" type="button" aria-label={ui.hero.spriteLabel}></button>
+  <button class="garuda-hit" type="button" aria-label={ui.hero.garudaLabel}></button>
+  <p class="garuda-bubble" role="status" hidden></p>
+  <div class="orbit-tag" hidden aria-hidden="true"></div>
+
+  <div class="hero-meta">
+    <div class="hero-intro" data-reveal style="--d: 120ms">
+      <p class="label"><span class="num">{sectionNumber('hello')}</span>{sections[0].label}</p>
+      <p class="tagline">{profile.tagline}</p>
+    </div>
+    <div class="hero-controls" data-reveal style="--d: 240ms">
+      <p class="label hint">{ui.hero.hint}</p>
+      <div class="control-row">
+        <button class="sound btn" type="button">{ui.hero.soundOn}</button>
+        <button class="pause btn" type="button">{ui.hero.pause}</button>
+      </div>
+    </div>
+  </div>
+
+  <button class="skip-intro btn" type="button">{ui.hero.skipIntro}</button>
+
+  <div class="gate" role="dialog" aria-modal="true" aria-labelledby="gate-title">
+    <p class="label"><span class="num">TNF</span>{profile.handle}</p>
+    <button class="gate-enter" type="button" id="gate-title">{ui.gate.enter}</button>
+    <p class="gate-note">
+      {ui.gate.note}
+      <button class="gate-quiet" type="button">{ui.gate.quiet}</button>
+    </p>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    height: 100svh;
+    min-height: 560px;
+    overflow: hidden;
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 1px;
+    background: var(--line);
+    transform-origin: left;
+  }
+
+  .hero-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Without JS there is no orbit, so the name shows as plain text. */
+  .hero-title {
+    position: absolute;
+    top: 40%;
+    left: var(--gutter);
+    right: var(--gutter);
+    margin: 0;
+    font-size: clamp(2.5rem, 8vw, 5rem);
+    line-height: 1;
+  }
+
+  .hero-title span {
+    display: block;
+    margin-top: 12px;
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--accent);
+  }
+
+  :global(.js) .hero-title {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+  }
+
+  .sprite-hit,
+  .garuda-hit {
+    position: absolute;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  .garuda-hit {
+    z-index: 2;
+  }
+
+  :global(:root:not(.js)) :is(.sprite-hit, .garuda-hit, .hero-controls, .gate) {
+    display: none;
+  }
+
+  .garuda-bubble {
+    position: absolute;
+    z-index: 6;
+    margin: 0;
+    padding: 8px 12px;
+    background: var(--text);
+    color: var(--bg);
+    border: 2px solid var(--bg);
+    box-shadow: 0 0 0 2px var(--text);
+    font-family: var(--font-pixel);
+    font-size: 0.875rem;
+    white-space: nowrap;
+    transform: translate(-50%, -100%);
+    pointer-events: none;
+  }
+
+  /* Pixel speech-bubble tail */
+  .garuda-bubble::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: -10px;
+    width: 8px;
+    height: 8px;
+    background: var(--text);
+    box-shadow: 4px 4px 0 0 var(--text);
+    transform: translateX(-50%);
+  }
+
+  .orbit-tag {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 5;
+    padding: 4px 8px;
+    background: var(--text);
+    color: var(--bg);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
+  .hero-meta {
+    position: absolute;
+    inset: auto 0 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 24px;
+    padding: 0 calc(var(--gutter) + var(--rail-w)) clamp(20px, 4vh, 40px) var(--gutter);
+    pointer-events: none;
+  }
+
+  /* Desktop: the section index owns the bottom-right corner, controls sit bottom-left
+     and the intro moves up top. */
+  @media (min-width: 960px) {
+    .hero-meta {
+      top: 0;
+    }
+    .hero-intro {
+      position: absolute;
+      top: calc(var(--header-h) + 32px);
+      left: var(--gutter);
+    }
+    .hero-meta .hero-controls {
+      margin-right: auto;
+      align-items: flex-start;
+    }
+  }
+
+  .hero-meta > * {
+    pointer-events: auto;
+  }
+
+  .hero-intro {
+    max-width: 30ch;
+  }
+
+  .hero-intro .label,
+  .hint {
+    margin: 0 0 8px;
+  }
+
+  .tagline {
+    margin: 0;
+    font-size: clamp(1rem, 1.6vw, 1.25rem);
+    line-height: 1.35;
+  }
+
+  .hero-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+  }
+
+  .control-row {
+    display: flex;
+    gap: 8px;
+  }
+
+  .skip-intro {
+    position: absolute;
+    left: var(--gutter);
+    bottom: clamp(20px, 4vh, 40px);
+    display: none;
+  }
+
+  :global(.is-intro:not(.is-gate)) .skip-intro {
+    display: inline-flex;
+  }
+
+  .gate {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    padding: var(--gutter);
+    background: var(--bg);
+    text-align: center;
+  }
+
+  :global(.is-gate) .gate {
+    display: flex;
+  }
+
+  .gate-enter {
+    min-height: 64px;
+    padding: 16px 28px;
+    border: 2px solid var(--text);
+    background: transparent;
+    color: var(--text);
+    font-family: var(--font-pixel);
+    font-size: clamp(1rem, 3.4vw, 1.75rem);
+    cursor: pointer;
+    transition: background 160ms, color 160ms, border-color 160ms;
+  }
+
+  .gate-enter:hover,
+  .gate-enter:focus-visible {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--bg);
+  }
+
+  .gate-note {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    color: var(--muted);
+  }
+
+  .gate-quiet {
+    min-height: 44px;
+    margin-left: 6px;
+    padding: 0 4px;
+    border: 0;
+    background: none;
+    color: var(--text);
+    font: inherit;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+  }
+
+  @media (max-width: 640px) {
+    .hero-meta {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 12px;
+    }
+    .hero-controls {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .hint {
+      margin: 0;
+    }
+    .control-row .btn {
+      padding: 10px 12px;
+    }
+  }
+</style>
+
+<script>
+  import { createHeroScene } from '../scripts/hero-scene.js';
+  import * as sound from '../scripts/sound.js';
+  import { profile } from '../data/profile.js';
+  import { stack, mascots } from '../data/tools.js';
+  import { ui } from '../data/ui.js';
+
+  const root = document.documentElement;
+  const hero = document.querySelector('.hero');
+  const pauseBtn = hero.querySelector('.pause');
+  const soundBtn = hero.querySelector('.sound');
+  const gate = hero.querySelector('.gate');
+
+  const remember = (key, value) => {
+    try {
+      sessionStorage.setItem(key, value);
+    } catch {}
+  };
+  const recall = (key) => {
+    try {
+      return sessionStorage.getItem(key);
+    } catch {
+      return null;
+    }
+  };
+
+  function syncSoundButton() {
+    soundBtn.textContent = sound.isEnabled() ? ui.hero.mute : ui.hero.soundOn;
+  }
+
+  document.fonts?.load('16px Silkscreen');
+
+  const scene = createHeroScene({
+    canvas: hero.querySelector('.hero-canvas'),
+    spriteButton: hero.querySelector('.sprite-hit'),
+    garudaButton: hero.querySelector('.garuda-hit'),
+    bubble: hero.querySelector('.garuda-bubble'),
+    tag: hero.querySelector('.orbit-tag'),
+    name: profile.name,
+    handle: profile.handle,
+    garudaLine: ui.garudaLine,
+    stack,
+    mascots,
+    playIntro: root.classList.contains('is-intro'),
+    waitForStart: root.classList.contains('is-gate'),
+    reducedMotion: matchMedia('(prefers-reduced-motion: reduce)').matches,
+    onCue: (name, arg) => sound.play(name, arg),
+    onReveal() {
+      if (root.classList.contains('is-intro')) {
+        const skipHadFocus = document.activeElement === hero.querySelector('.skip-intro');
+        root.classList.remove('is-intro', 'is-gate');
+        root.classList.add('is-revealed');
+        if (skipHadFocus) hero.querySelector('.sprite-hit').focus();
+      }
+      remember('tnf-intro-seen', '1');
+    },
+  });
+
+  function enter(withSound) {
+    if (!root.classList.contains('is-gate')) return;
+    if (withSound) sound.unlock();
+    remember('tnf-sound', withSound ? '1' : '0');
+    syncSoundButton();
+    root.classList.remove('is-gate');
+    scene.begin();
+  }
+
+  if (root.classList.contains('is-gate')) {
+    gate.querySelector('.gate-enter').focus();
+    gate.querySelector('.gate-enter').addEventListener('click', () => enter(true));
+    gate.querySelector('.gate-quiet').addEventListener('click', () => enter(false));
+  }
+
+  addEventListener('keydown', (e) => {
+    if (root.classList.contains('is-gate')) {
+      // Tab stays usable for reaching the quiet option; Escape enters quietly.
+      if (['Tab', 'Shift', 'Control', 'Alt', 'Meta'].includes(e.key)) return;
+      if (e.target.closest?.('.gate button') && (e.key === 'Enter' || e.key === ' ')) return;
+      e.preventDefault();
+      enter(e.key !== 'Escape');
+      return;
+    }
+    if (e.key === 'Escape' && root.classList.contains('is-intro')) scene.skipIntro();
+  });
+
+  // A returning visitor in the same session gets their earlier sound choice back on first interaction.
+  if (recall('tnf-sound') === '1' && !root.classList.contains('is-gate')) {
+    addEventListener('pointerdown', () => {
+      sound.unlock();
+      syncSoundButton();
+    }, { once: true });
+  }
+
+  syncSoundButton();
+  soundBtn.addEventListener('click', () => {
+    sound.setEnabled(!sound.isEnabled());
+    remember('tnf-sound', sound.isEnabled() ? '1' : '0');
+    syncSoundButton();
+    sound.play('blip', 4);
+  });
+
+  pauseBtn.addEventListener('click', () => {
+    const paused = !root.classList.contains('is-paused');
+    pauseBtn.textContent = paused ? ui.hero.play : ui.hero.pause;
+    root.classList.toggle('is-paused', paused);
+    scene.setPaused(paused);
+  });
+</script>

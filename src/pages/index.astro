@@ -1,0 +1,403 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Hero from '../components/Hero.astro';
+import Marquee from '../components/Marquee.astro';
+import SectionNav from '../components/SectionNav.astro';
+import Headline from '../components/Headline.astro';
+import { profile } from '../data/profile.js';
+import { stack } from '../data/tools.js';
+import { projects } from '../data/projects.js';
+import { now } from '../data/now.js';
+import { contact } from '../data/contact.js';
+import { section, sectionNumber } from '../data/sections.js';
+import { ui, fill } from '../data/ui.js';
+
+const year = new Date().getFullYear();
+const about = section('about');
+const work = section('work');
+const nowSection = section('now');
+const contactSection = section('contact');
+---
+
+<Base>
+  <script is:inline slot="head">
+    (() => {
+      const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      let seen = false;
+      try {
+        seen = sessionStorage.getItem('tnf-intro-seen') === '1';
+      } catch {}
+      if (!reduced && !seen) document.documentElement.classList.add('is-intro', 'is-gate');
+    })();
+  </script>
+
+  <Header withMenu />
+  <SectionNav />
+
+  <main id="main">
+    <Hero />
+    <Marquee />
+
+    <section id="about" class="section about" aria-labelledby="about-title">
+      <div class="section-head">
+        <p class="label"><span class="num">{sectionNumber('about')}</span>{about.label}</p>
+      </div>
+      <div class="about-grid">
+        <Headline id="about-title" text={profile.about.headline} />
+        <div class="about-body">
+          {profile.about.paragraphs.map((p) => <p>{p}</p>)}
+          <div class="stack-panel">
+            <p class="label">{about.toolsTitle}</p>
+            <ul class="stack-list">
+              {stack.map((t) => (
+                <li>
+                  <canvas class="px-icon" data-icon={t.key} aria-hidden="true"></canvas>
+                  <span>{t.name}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="work" class="section work" aria-labelledby="work-title">
+      <div class="section-head">
+        <p class="label"><span class="num">{sectionNumber('work')}</span>{work.label}</p>
+      </div>
+      <Headline id="work-title" text={work.headline} />
+
+      {projects.length === 0 ? (
+        <div class="work-empty">
+          <p class="work-empty-title">{work.empty.title}</p>
+          <p>{work.empty.text}</p>
+          <a class="btn" href={work.empty.cta.href} target="_blank" rel="noopener">{work.empty.cta.label}</a>
+        </div>
+      ) : (
+        <ol class="project-grid">
+          {projects.map((p, i) => (
+            <li class:list={['project', { featured: i === 0 }]}>
+              <p class="label"><span class="num">{String(i + 1).padStart(2, '0')}</span>{p.tags.join(' / ')}</p>
+              <h3>{p.title}</h3>
+              <p>{p.summary}</p>
+              <p class="project-links">
+                {p.repo && <a href={p.repo} target="_blank" rel="noopener">{work.codeLabel}</a>}
+                {p.live && <a href={p.live} target="_blank" rel="noopener">{work.liveLabel}</a>}
+              </p>
+            </li>
+          ))}
+        </ol>
+      )}
+    </section>
+
+    <section id="now" class="section now" aria-labelledby="now-title">
+      <div class="section-head">
+        <p class="label"><span class="num">{sectionNumber('now')}</span>{nowSection.label}</p>
+        <p class="label">{nowSection.updatedPrefix} {now.updated}</p>
+      </div>
+      <Headline id="now-title" text={nowSection.headline} />
+      <dl class="now-list">
+        {now.items.map((item) => (
+          <div>
+            <dt class="label">{item.label}</dt>
+            <dd>{item.text}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+
+    <section id="contact" class="section contact" aria-labelledby="contact-title">
+      <div class="section-head">
+        <p class="label"><span class="num">{sectionNumber('contact')}</span>{contactSection.label}</p>
+      </div>
+      <Headline id="contact-title" class="contact-title" text={contactSection.headline} />
+      <ul class="contact-list">
+        {contact.links.map((l) => (
+          <li>
+            <a class="contact-row" href={l.href} target="_blank" rel="noopener">
+              <span class="contact-name">{l.name}</span>
+              <span class="contact-handle">{l.handle}</span>
+            </a>
+          </li>
+        ))}
+        {contact.email && (
+          <li>
+            <button class="contact-row" type="button" data-copy={contact.email} data-copy-label="Email">
+              <span class="contact-name">Email</span>
+              <span class="contact-handle">{contact.email} <span class="copy-hint">{ui.copy.button}</span></span>
+            </button>
+          </li>
+        )}
+        {contact.discord && (
+          <li>
+            <button class="contact-row" type="button" data-copy={contact.discord} data-copy-label="Discord username">
+              <span class="contact-name">Discord</span>
+              <span class="contact-handle">{contact.discord} <span class="copy-hint">{ui.copy.button}</span></span>
+            </button>
+          </li>
+        )}
+      </ul>
+      <p class="copy-status" role="status" aria-live="polite"></p>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>{fill(ui.footer, { name: profile.name, year })}</p>
+    <a href="#hello">{ui.backToTop}</a>
+  </footer>
+</Base>
+
+<style>
+  /* About: headline left, words and tools right. */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: clamp(32px, 6vw, 96px);
+    align-items: start;
+  }
+
+  .about-body > p {
+    margin: 0 0 1em;
+    max-width: 52ch;
+    color: var(--muted);
+  }
+
+  .about-body > p:first-child {
+    color: var(--text);
+    font-size: 1.25rem;
+    line-height: 1.45;
+  }
+
+  .stack-panel {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+  }
+
+  .stack-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 14px 20px;
+    margin: 16px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .stack-list li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+  }
+
+  /* Work */
+  .work :global(.headline) {
+    margin-bottom: clamp(32px, 5vw, 56px);
+  }
+
+  .work-empty {
+    max-width: 640px;
+    padding: clamp(24px, 4vw, 40px);
+    border: 1px dashed var(--line);
+  }
+
+  .work-empty p {
+    margin: 0 0 20px;
+    color: var(--muted);
+  }
+
+  .work-empty .work-empty-title {
+    margin-bottom: 8px;
+    font-family: var(--font-pixel);
+    font-size: clamp(1rem, 2.4vw, 1.375rem);
+    color: var(--text);
+  }
+
+  .project-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--line);
+    border-left: 1px solid var(--line);
+  }
+
+  .project {
+    padding: clamp(20px, 3vw, 32px);
+    border-right: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .project.featured {
+    grid-column: 1 / -1;
+  }
+
+  .project h3 {
+    margin: 12px 0 8px;
+    font-size: clamp(1.5rem, 3vw, 2.25rem);
+    letter-spacing: -0.02em;
+  }
+
+  .project p {
+    margin: 0;
+    color: var(--muted);
+  }
+
+  .project-links {
+    display: flex;
+    gap: 20px;
+    margin-top: 16px !important;
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+  }
+
+  .project-links a {
+    color: var(--text);
+  }
+
+  /* Now: a short ledger, label column and text column. */
+  .now :global(.headline) {
+    margin-bottom: clamp(32px, 5vw, 56px);
+  }
+
+  .now-list {
+    margin: 0;
+    max-width: 960px;
+  }
+
+  .now-list > div {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 16px;
+    padding: 20px 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .now-list dt {
+    color: var(--accent);
+    padding-top: 4px;
+  }
+
+  .now-list dd {
+    margin: 0;
+    font-size: clamp(1.125rem, 2.2vw, 1.5rem);
+    line-height: 1.35;
+  }
+
+  /* Contact: big type, full-width rows. Tall enough that its label can dock in the header. */
+  .contact {
+    min-height: calc(100svh - var(--header-h));
+  }
+
+  :global(.contact-title) {
+    font-size: clamp(3.5rem, 14vw, 11rem);
+    margin-bottom: clamp(32px, 5vw, 56px);
+  }
+
+  .contact-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--line);
+  }
+
+  .contact-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+    min-height: 64px;
+    padding: 16px 8px;
+    border: 0;
+    border-bottom: 1px solid var(--line);
+    background: transparent;
+    color: var(--text);
+    font: inherit;
+    text-align: left;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 160ms, color 160ms, padding 200ms;
+  }
+
+  .contact-row:hover {
+    background: var(--accent);
+    color: var(--bg);
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .contact-name {
+    font-size: clamp(1.25rem, 3vw, 2rem);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  .contact-handle {
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    overflow-wrap: anywhere;
+    text-align: right;
+  }
+
+  .copy-hint {
+    margin-left: 10px;
+    padding: 2px 6px;
+    border: 1px solid currentColor;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+  }
+
+  .copy-status {
+    min-height: 1.6em;
+    margin: 16px 0 0;
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    color: var(--muted);
+  }
+
+  .site-footer {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 24px var(--gutter) 32px;
+    border-top: 1px solid var(--line);
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--muted);
+  }
+
+  .site-footer p {
+    margin: 0;
+  }
+
+  .site-footer a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    margin: -12px 0;
+    color: var(--text);
+  }
+
+  @media (max-width: 800px) {
+    .about-grid {
+      grid-template-columns: 1fr;
+    }
+    .project-grid {
+      grid-template-columns: 1fr;
+    }
+    .now-list > div {
+      grid-template-columns: 1fr;
+      gap: 6px;
+    }
+  }
+</style>
+
+<script>
+  import { initPage } from '../scripts/page.js';
+  initPage();
+</script>
