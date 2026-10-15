@@ -27,5 +27,9 @@ const { title = `${profile.name} (${profile.handle})`, description = profile.tag
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
     <slot />
+    <script>
+      import { initVectorGrid } from '../scripts/vector-grid.js';
+      initVectorGrid();
+    </script>
   </body>
 </html>

@@ -260,3 +260,67 @@ a {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Vector grid background + custom cursor (src/scripts/vector-grid.js). */
+.vgrid {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  width: 100vw;
+  height: 100vh;
+  max-width: none;
+  pointer-events: none;
+}
+
+html.has-vcursor,
+html.has-vcursor * {
+  cursor: none !important;
+}
+
+.vcursor-dot,
+.vcursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  pointer-events: none;
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 200ms;
+}
+
+html.vcursor-on .vcursor-dot,
+html.vcursor-on .vcursor-ring {
+  opacity: 1;
+}
+
+.vcursor-dot {
+  width: 8px;
+  height: 8px;
+  margin: -4px 0 0 -4px;
+  background: var(--accent);
+}
+
+.vcursor-ring {
+  width: 36px;
+  height: 36px;
+  margin: -18px 0 0 -18px;
+  border: 1.5px solid var(--accent);
+}
+
+.vcursor-ring {
+  transition: opacity 200ms, width 180ms, height 180ms, margin 180ms, background 180ms;
+}
+
+.vcursor-ring.is-hover {
+  width: 56px;
+  height: 56px;
+  margin: -28px 0 0 -28px;
+  background: rgb(255 90 31 / 0.12);
+}
+
+.vcursor-ring.is-down {
+  width: 26px;
+  height: 26px;
+  margin: -13px 0 0 -13px;
+}
