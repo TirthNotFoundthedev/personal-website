@@ -210,6 +210,45 @@ const defs = {
     ctx.fillStyle = grad;
     ctx.fill(new Path2D(LOGO_PATHS.googlegemini));
   }],
+
+  // Pi and the cube use a finer grid so the curl and the stickers read clearly.
+  pi: [30, ['#ff5a1f', '#ffb08a'], (ctx) => {
+    // Top bar, then two legs: the left one straight, the right one curling out at the foot.
+    poly(ctx, '#ff5a1f', [[2, 4.5], [22, 3], [22, 7.5], [2, 9]]);
+    poly(ctx, '#ffb08a', [[2, 4.5], [22, 3], [22, 4.6], [2, 6]]);
+    poly(ctx, '#ff5a1f', [[7, 8], [10.6, 8], [9.6, 21], [5, 22]]);
+    ctx.fillStyle = '#ff5a1f';
+    ctx.beginPath();
+    ctx.moveTo(14, 7.5);
+    ctx.lineTo(17.6, 7.5);
+    ctx.lineTo(17.4, 17);
+    ctx.quadraticCurveTo(17.6, 19, 20.5, 18.4);
+    ctx.lineTo(21.5, 21);
+    ctx.quadraticCurveTo(14, 23.5, 14, 17.5);
+    ctx.closePath();
+    ctx.fill();
+  }],
+  rubiks: [30, ['#141418', '#f4f4f4', '#ffd500', '#c41e3a', '#ff5800', '#0051ba', '#009e60'], (ctx) => {
+    // Isometric cube: a black body with a 3x3 grid of stickers on each visible face.
+    const top = [[12, 1.5], [22.5, 6.8], [12, 12], [1.5, 6.8]];
+    const left = [[1.5, 6.8], [12, 12], [12, 23], [1.5, 17.8]];
+    const right = [[12, 12], [22.5, 6.8], [22.5, 17.8], [12, 23]];
+    for (const face of [top, left, right]) poly(ctx, '#141418', face);
+    const faces = [
+      [top[3], [10.5, -5.3], [10.5, 5.3], ['#f4f4f4', '#f4f4f4', '#ffd500', '#f4f4f4', '#f4f4f4', '#f4f4f4', '#0051ba', '#f4f4f4', '#f4f4f4']],
+      [left[0], [10.5, 5.3], [0, 11], ['#c41e3a', '#c41e3a', '#009e60', '#c41e3a', '#ff5800', '#c41e3a', '#c41e3a', '#c41e3a', '#f4f4f4']],
+      [right[0], [10.5, -5.3], [0, 11], ['#0051ba', '#ffd500', '#0051ba', '#0051ba', '#0051ba', '#0051ba', '#009e60', '#0051ba', '#0051ba']],
+    ];
+    const gap = 0.12;
+    for (const [[ox, oy], [ux, uy], [vx, vy], colors] of faces) {
+      colors.forEach((color, k) => {
+        const i = k % 3;
+        const j = Math.floor(k / 3);
+        const at = (a, b) => [ox + (ux * a + vx * b) / 3, oy + (uy * a + vy * b) / 3];
+        poly(ctx, color, [at(i + gap, j + gap), at(i + 1 - gap, j + gap), at(i + 1 - gap, j + 1 - gap), at(i + gap, j + 1 - gap)]);
+      });
+    }
+  }],
 };
 
 let cache = null;

@@ -304,7 +304,7 @@ import { ui } from '../data/ui.js';
   import { createHeroScene } from '../scripts/hero-scene.js';
   import * as sound from '../scripts/sound.js';
   import { profile } from '../data/profile.js';
-  import { stack, mascots } from '../data/tools.js';
+  import { techRing, mascots } from '../data/tools.js';
   import { ui } from '../data/ui.js';
 
   const root = document.documentElement;
@@ -341,7 +341,7 @@ import { ui } from '../data/ui.js';
     name: profile.name,
     handle: profile.handle,
     garudaLine: ui.garudaLine,
-    stack,
+    stack: techRing,
     mascots,
     playIntro: root.classList.contains('is-intro'),
     waitForStart: root.classList.contains('is-gate'),
